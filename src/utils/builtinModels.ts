@@ -3,7 +3,7 @@ import type { BuiltinModelType, WallParams, PartitionParams, LightParams } from 
 export interface BuiltinModelDef {
   type: BuiltinModelType;
   label: string;
-  emoji: string;
+  icon: string;
   /** Public URL path to GLB, empty string for procedural models (Wall) */
   assetUrl: string;
   fileName: string;
@@ -41,14 +41,14 @@ export const BUILTIN_MODELS: BuiltinModelDef[] = [
   {
     type: "Wall",
     label: "Wall",
-    emoji: "🧱",
+    icon: "mdi:wall",
     assetUrl: "", // procedural — no GLB
     fileName: "__builtin_wall",
   },
   {
     type: "Chair",
     label: "Chair",
-    emoji: "🪑",
+    icon: "mdi:chair-rolling",
     assetUrl: "/assets/3D/Chair.glb",
     fileName: "__builtin_chair.glb",
     hidden: true,
@@ -56,7 +56,7 @@ export const BUILTIN_MODELS: BuiltinModelDef[] = [
   {
     type: "Desk",
     label: "Desk",
-    emoji: "🖥️",
+    icon: "mdi:desk",
     assetUrl: "/assets/3D/Desk.glb",
     fileName: "__builtin_desk.glb",
     hidden: true,
@@ -64,7 +64,7 @@ export const BUILTIN_MODELS: BuiltinModelDef[] = [
   {
     type: "Desk2",
     label: "Desk 2",
-    emoji: "💻",
+    icon: "mdi:desk",
     assetUrl: "/assets/3D/Desk2.glb",
     fileName: "__builtin_desk2.glb",
     hidden: true,
@@ -72,7 +72,7 @@ export const BUILTIN_MODELS: BuiltinModelDef[] = [
   {
     type: "Partition",
     label: "Partition",
-    emoji: "🪟",
+    icon: "mdi:slash-forward-box",
     assetUrl: "", // procedural
     fileName: "__builtin_partition",
     hidden: true,
@@ -80,14 +80,14 @@ export const BUILTIN_MODELS: BuiltinModelDef[] = [
   {
     type: "Clock",
     label: "Clock",
-    emoji: "⏰",
+    icon: "mdi:clock-digital",
     assetUrl: "", // procedural component
     fileName: "__builtin_clock",
   },
   {
     type: "Light",
     label: "Light",
-    emoji: "💡",
+    icon: "mdi:lightbulb",
     assetUrl: "", // procedural — emits directional light
     fileName: "__builtin_light",
     hidden: true,
@@ -95,56 +95,56 @@ export const BUILTIN_MODELS: BuiltinModelDef[] = [
   {
     type: "ACStand",
     label: "에어컨",
-    emoji: "❄️",
+    icon: "mdi:air-conditioner",
     assetUrl: "/models/AC_stand.glb",
     fileName: "__builtin_ac_stand.glb",
   },
   {
     type: "Printer",
     label: "프린터",
-    emoji: "🖨️",
+    icon: "mdi:printer",
     assetUrl: "/models/printer.glb",
     fileName: "__builtin_printer.glb",
   },
   {
     type: "DeskOn",
     label: "데스크 ON",
-    emoji: "🖥️",
+    icon: "mdi:desk",
     assetUrl: "/models/desk_on.glb",
     fileName: "__builtin_desk_on.glb",
   },
   {
     type: "DeskOff",
     label: "데스크 OFF",
-    emoji: "💻",
+    icon: "mdi:desk",
     assetUrl: "/models/desk_off.glb",
     fileName: "__builtin_desk_off.glb",
   },
   {
     type: "ChairOffice",
     label: "사무용 의자",
-    emoji: "💺",
+    icon: "mdi:chair-rolling",
     assetUrl: "/models/chair_office.glb",
     fileName: "__builtin_chair_office.glb",
   },
   {
     type: "PartitionModel",
     label: "파티션 (Model)",
-    emoji: "🪟",
+    icon: "mdi:slash-forward-box",
     assetUrl: "/models/partition.glb",
     fileName: "__builtin_partition_model.glb",
   },
   {
-    type: "TableLarge",
-    label: "대형 테이블",
-    emoji: "🪵",
-    assetUrl: "/models/table_large.glb",
-    fileName: "__builtin_table_large.glb",
+    type: "TableSmall",
+    label: "테이블",
+    icon: "mdi:table-furniture",
+    assetUrl: "/models/table_small.glb",
+    fileName: "__builtin_table_small.glb",
   },
   {
     type: "DoorAuto",
     label: "자동문",
-    emoji: "🚪",
+    icon: "mdi:door-sliding-open",
     assetUrl: "/models/door_auto.glb",
     fileName: "__builtin_door_auto.glb",
   },

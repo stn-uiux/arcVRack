@@ -389,6 +389,12 @@ export const ModelImporter = () => {
   useEffect(() => {
     let dragTimeout: NodeJS.Timeout;
 
+    const handleDragEnter = (e: DragEvent) => {
+      if (e.dataTransfer?.types.includes("Files") && isEditMode) {
+        e.preventDefault();
+      }
+    };
+
     const handleDragOver = (e: DragEvent) => {
       if (e.dataTransfer?.types.includes("Files") && isEditMode) {
         e.preventDefault();
@@ -401,16 +407,21 @@ export const ModelImporter = () => {
       }
     };
 
-    const handleDrop = () => {
+    const handleDrop = (e: DragEvent) => {
+      if (e.dataTransfer?.types.includes("Files")) {
+        e.preventDefault();
+      }
       clearTimeout(dragTimeout);
       setIsDragOver(false);
     };
 
+    window.addEventListener("dragenter", handleDragEnter, { capture: true });
     window.addEventListener("dragover", handleDragOver, { capture: true });
     window.addEventListener("drop", handleDrop, { capture: true });
 
     return () => {
       clearTimeout(dragTimeout);
+      window.removeEventListener("dragenter", handleDragEnter, { capture: true });
       window.removeEventListener("dragover", handleDragOver, { capture: true });
       window.removeEventListener("drop", handleDrop, { capture: true });
     };
@@ -610,7 +621,7 @@ export const ModelImporter = () => {
               className="comm-btn comm-btn-md comm-btn-tertiary comm-w-full"
               onClick={() => handleAddBuiltin(def)}
             >
-              <span role="img" aria-label={def.label}>{def.emoji}</span> {def.label}
+              <Icon icon={def.icon} className="icon asset-lib-icon" width="18" height="18" /> {def.label}
             </button>
           ))}
         </div>
@@ -1039,6 +1050,7 @@ export const ModelImporter = () => {
           {isDragOver && (
             <div
               className="comm-drag-overlay"
+              style={{ pointerEvents: 'none' }}
             >
               <div className="comm-icon-64">📦</div>
               <div
@@ -1127,7 +1139,7 @@ export const ModelImporter = () => {
               {importPreview.modelNames.map((name, idx) => {
                 const m = importPkg.models[idx];
                 const def = BUILTIN_MODELS.find(b => b.type === m.builtinType);
-                const icon = def ? def.emoji : "📦";
+                const iconName = def ? def.icon : "mdi:package-variant-closed";
                 return (
                   <div
                     key={idx}
@@ -1144,7 +1156,7 @@ export const ModelImporter = () => {
                       gap: "8px",
                     }}
                   >
-                    <span>{icon}</span>
+                    <Icon icon={iconName} style={{ fontSize: '14px' }} />
                     <span className="comm-flex-1">{name}</span>
                     <span
                       style={{

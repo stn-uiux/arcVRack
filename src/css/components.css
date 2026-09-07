@@ -6660,3 +6660,8 @@ input:checked+.slider:before {
   background: transparent;
   border-color: transparent;
 }
+/* Override for Asset Library Icons */
+.comm-btn-md svg.asset-lib-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
