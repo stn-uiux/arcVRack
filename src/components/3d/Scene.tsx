@@ -598,6 +598,11 @@ export const Scene = () => {
         {/* Universal High-Quality Environment (Lights, Floor, Post-Processing) */}
         <CyberSpaceEnvironment />
 
+        {/* Imported 3D Models */}
+        {importedModels.map((model) => (
+          <ImportedModelMesh key={model.id} model={model} />
+        ))}
+
         {/* Racks (filtered by active group) */}
         {groupRacks.map((rack) => (
           <Rack key={rack.rackId} {...rack} />
@@ -605,11 +610,6 @@ export const Scene = () => {
 
         {/* The Hidden Drag Engine */}
         <DragHandler />
-
-        {/* Imported 3D Models */}
-        {importedModels.map((model) => (
-          <ImportedModelMesh key={model.id} model={model} />
-        ))}
 
         <SceneReadyMonitor isReadyToMonitor={isReadyToMonitor} />
       </Suspense>
