@@ -31,6 +31,7 @@ const ShadowOptimizer = () => {
   const isDragging = useStore((s) => s.isDragging);
   const draggingModelId = useStore((s) => s.draggingModelId);
   const isEditMode = useStore((s) => s.isEditMode);
+  const csIsLightMode = useStore((s) => s.csIsLightMode);
 
   // Robustly hash all properties that could affect the physical geometry or lighting of the scene
   const racksHash = useStore((s) =>
@@ -49,7 +50,7 @@ const ShadowOptimizer = () => {
       gl.shadowMap.autoUpdate = false;
       gl.shadowMap.needsUpdate = true;
     }
-  }, [gl, isDragging, draggingModelId, isEditMode, racksHash, modelsHash]);
+  }, [gl, isDragging, draggingModelId, isEditMode, csIsLightMode, racksHash, modelsHash]);
 
   return null;
 };
@@ -344,8 +345,8 @@ export const Scene = () => {
     : isDarkMode
       ? "radial-gradient(circle at 50% 50%, #1e3a8a 0%, #0a1324 60%, #050b14 100%)"
       : "radial-gradient(circle at 50% 50%, #e0e7ff 0%, #cbd5e1 60%, #94a3b8 100%)";
-  const gridCellColor = isDarkMode ? "#6b7080" : "#ccc"; // Neutral/cool gray for dark mode grid cells
-  const gridSectionColor = isDarkMode ? "#7d8292" : "#999"; // Neutral/cool gray for dark mode grid sections
+  const gridCellColor = isDarkMode ? "#8a91a3" : "#ccc"; // 밝은 회색으로 변경하여 가시성 확보
+  const gridSectionColor = isDarkMode ? "#b3b8c6" : "#999"; // 더 밝은 회색으로 섹션 구분 확실하게
   const pointerDownPos = useRef<{ x: number; y: number } | null>(null);
 
   // Global release handler using native window listener for 100% reliability
@@ -394,20 +395,20 @@ export const Scene = () => {
       {/* Only use default basic lights in Edit Mode */}
       {isEditMode && (
         <>
-          <ambientLight intensity={isDarkMode ? 2.0 : 2.0} />
+          <ambientLight intensity={isDarkMode ? 1.0 : 1.0} />
           {/* Only render default directional light if no user-placed Light model exists */}
           {!hasUserLight && (
             <directionalLight
               position={[10, 20, 5]}
-              intensity={isDarkMode ? 2.5 : 1.8}
+              intensity={isDarkMode ? 1.8 : 1.8}
               castShadow
               shadow-mapSize={[1024, 1024]}
             />
           )}
           <hemisphereLight
-            intensity={isDarkMode ? 1.0 : 0.8}
+            intensity={isDarkMode ? 0.8 : 0.8}
             color="#ffffff"
-            groundColor="#444444"
+            groundColor="#ffffff"
           />
         </>
       )}
@@ -459,7 +460,7 @@ export const Scene = () => {
       )}
 
       <Suspense fallback={null}>
-        {isEditMode && <EnvironmentSafe preset={isDarkMode ? "night" : "city"} />}
+        {isEditMode && <EnvironmentSafe preset="city" />}
       </Suspense>
 
       <Suspense fallback={null}>

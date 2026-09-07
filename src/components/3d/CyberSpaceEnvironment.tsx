@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useThree } from '@react-three/fiber';
-import { MeshReflectorMaterial, Grid, Plane } from '@react-three/drei';
+import { MeshReflectorMaterial, Grid, Plane, Environment } from '@react-three/drei';
 import { EffectComposer, Bloom, N8AO, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { SpotLightWithTarget } from './SpotLightWithTarget';
@@ -31,6 +31,31 @@ function SceneEnvironment({ fogColor, fogIntensity }: { fogColor: string, fogInt
       scene.fog = null;
     };
   }, [scene, fogColor, fogIntensity, isEditMode]);
+  return null;
+}
+
+// 가상공간이 꺼져있을 때 안개를 강제로 제거하는 유틸리티 컴포넌트
+function FogRemover() {
+  const scene = useThree(state => state.scene);
+  const csIsLightMode = useStore(state => state.csIsLightMode);
+
+  useEffect(() => {
+    const prevFog = scene.fog;
+    scene.fog = null;
+    return () => {
+      scene.fog = prevFog;
+    };
+  }, [scene, csIsLightMode]); // 모드가 바뀔 때(안개가 다시 생길 때) 다시 지우도록 감지
+
+  return null;
+}
+
+// 가상공간이 켜졌을 때, 꺼졌을 때 썼던 환경 조명(Environment map)이 남아있는 것을 강제로 청소하는 유틸리티
+function EnvCleaner() {
+  const scene = useThree(state => state.scene);
+  useEffect(() => {
+    scene.environment = null;
+  }, [scene]);
   return null;
 }
 
@@ -285,22 +310,76 @@ export function CyberSpaceEnvironment() {
       <group visible={!isEditMode}>
         <SceneEnvironment fogColor={csFogColor} fogIntensity={csFogIntensity} />
 
+        {/* 가상 공간이 꺼져 있을 때 Environment 조명 추가 */}
+        {!cyberSpaceEnabled && (
+          <Suspense fallback={null}>
+            <FogRemover />
+            <Environment
+              preset="city"
+              environmentIntensity={csIsLightMode ? 0.6 : 0.6}
+              blur={0.8}
+            />
+            {csIsLightMode ? (
+              <>
+                <hemisphereLight color="#ffffff" groundColor="#ffffff" intensity={0.8} />
+              </>
+            ) : (
+              <>
+                <ambientLight intensity={0.8 * csBrightness} color="#bcdcff" />
+                <hemisphereLight color="#ffffff" groundColor="#ffffff" intensity={0.8} />
+              </>
+            )}
+          </Suspense>
+        )}
+
+
         {csIsLightMode ? (
           <>
-            <ambientLight intensity={1.2 * csBrightness} color="#ffffff" />
-            <hemisphereLight color="#ffffff" groundColor="#ffffff" intensity={0.8 * csBrightness} />
-            <directionalLight position={[10, 20, 10]} intensity={0.4 * csBrightness} color="#ffffff" castShadow />
+            <ambientLight intensity={1.2 * csBrightness} color="#cde4ff" />
+            <directionalLight
+              position={[0, 20, 0]}
+              intensity={1.4 * csBrightness}
+              color="#ffffff"
+              castShadow
+              shadow-mapSize={[2048, 2048]}
+              shadow-bias={-0.001}
+              shadow-normalBias={0.04}
+            >
+              <orthographicCamera attach="shadow-camera" args={[-50, 50, 50, -50, 0.1, 100]} />
+            </directionalLight>
             <directionalLight position={[-10, 15, -10]} intensity={0.2 * csBrightness} color="#f0f8ff" />
+            {cyberSpaceEnabled && (
+              <Suspense fallback={null}>
+                <hemisphereLight color="#ffffff" groundColor="#ffffff" intensity={0.8} />
+              </Suspense>
+            )}
           </>
         ) : (
           <>
-            <ambientLight intensity={0.5 * csBrightness} color="#93c5fd" />
-            <directionalLight position={[0, 20, 0]} intensity={1.5 * csBrightness} color="#e0f2fe" castShadow />
+            <directionalLight
+              position={[0, 20, 0]}
+              intensity={1.4 * csBrightness}
+              color="#ffffff"
+              castShadow
+              shadow-mapSize={[2048, 2048]}
+              shadow-bias={-0.001}
+              shadow-normalBias={0.04}
+            >
+              <orthographicCamera attach="shadow-camera" args={[-50, 50, 50, -50, 0.1, 100]} />
+            </directionalLight>
+            <directionalLight position={[-10, 15, -10]} intensity={0.2 * csBrightness} color="#f0f8ff" />
+            {cyberSpaceEnabled && (
+              <Suspense fallback={null}>
+                <ambientLight intensity={0.5 * csBrightness} color="#93c5fd" />
+              </Suspense>
+            )}
           </>
         )}
 
         {cyberSpaceEnabled && csIsVisible && (
           <group position={[csCustomSpaceSize ? csOffsetXCm / 100 : 0, 0, csCustomSpaceSize ? csOffsetZCm / 100 : 0]}>
+            <EnvCleaner />
+            
             {/* Floor Dark Recessed Background */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]}>
               <planeGeometry args={[roomWidth + 0.1, roomLength + 0.1]} />
@@ -310,10 +389,10 @@ export function CyberSpaceEnvironment() {
             {csLowSpecMode ? (
               <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
                 <planeGeometry args={[roomWidth - 0.02, roomLength - 0.02]} />
-                <meshStandardMaterial 
-                  color={csFloorColor} 
-                  roughness={csFloorRoughness} 
-                  metalness={csIsLightMode ? 0.0 : 0.4} 
+                <meshStandardMaterial
+                  color={csFloorColor}
+                  roughness={csFloorRoughness}
+                  metalness={csIsLightMode ? 0.0 : 0.4}
                 />
               </mesh>
             ) : (
@@ -361,8 +440,15 @@ export function CyberSpaceEnvironment() {
       </group>
 
       <EffectComposer enabled={!isEditMode}>
-        <N8AO aoRadius={1} intensity={csLowSpecMode ? 0 : csAoIntensity} distanceFalloff={0.2} color="black" />
-        <Bloom luminanceThreshold={csIsLightMode ? 2.0 : 0.8} mipmapBlur levels={7} intensity={csLowSpecMode ? 0 : 0.7 * Math.max(0.5, csBrightness) * csBloomIntensity} />
+        <N8AO 
+          aoRadius={1} 
+          intensity={csLowSpecMode ? 0 : (csIsLightMode ? csAoIntensity : csAoIntensity * 2)} 
+          distanceFalloff={0.2} 
+          color="black" 
+        />
+        {cyberSpaceEnabled && (
+          <Bloom luminanceThreshold={csIsLightMode ? 2.0 : 0.8} mipmapBlur levels={7} intensity={csLowSpecMode ? 0 : 0.7 * Math.max(0.5, csBrightness) * csBloomIntensity} />
+        )}
         <Vignette eskil={false} offset={0.1} darkness={csIsLightMode ? 0.25 : 0.5} />
       </EffectComposer>
     </>

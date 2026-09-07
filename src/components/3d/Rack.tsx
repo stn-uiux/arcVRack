@@ -501,7 +501,7 @@ export const Rack = memo(({
           onClick={isObstructing ? undefined : (e) => {
             if (e.delta > 15) return; // Ignore drag
             (e as any).stoppedByRack = true;
-            
+
             const hitGizmoHelper = e.intersections.some((hit) => {
               let obj: Object3D | null = hit.object;
               while (obj) {
@@ -640,7 +640,7 @@ export const Rack = memo(({
               <meshBasicMaterial color="#ffffff" />
             </mesh>
             {/* Top Blue Glow Lights extracted to GlobalFocusLights */}
-            
+
             {/* Bottom Blue LED Line (Core) */}
             <mesh position={[0, -height / 2 + 0.03, 0]}>
               <boxGeometry args={[width - 0.08, 0.005, 0.005]} />
@@ -846,7 +846,7 @@ const DeviceMesh = ({
   });
 
   const customModels = useStore((s) => s.customModels);
-  
+
   const thumbUrl = useMemo(
     () => {
       // 1. Per-device override (if any)

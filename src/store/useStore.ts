@@ -81,9 +81,9 @@ export const DEFAULT_CYBER_SPACE_CONFIG: CyberSpaceConfig = {
   csRoomLengthCm: 800,
   csOffsetXCm: 0,
   csOffsetZCm: 0,
-  csWallColor: "#859cba",
-  csCeilingColor: '#859cba',
-  csFloorColor: '#373942',
+  csWallColor: "#5979a3",
+  csCeilingColor: '#5676a0',
+  csFloorColor: '#294463',
   csFogColor: '#0a1324',
   csLowSpecMode: false,
 };
@@ -213,7 +213,7 @@ export interface AppState {
     type: "success" | "error",
     source?: string,
   ) => void;
-  
+
   myPageModalOpen: boolean;
   setMyPageModalOpen: (open: boolean) => void;
   settingsModalOpen: boolean;
@@ -547,10 +547,10 @@ export const useStore = create<AppState>()(
       layouts: {},
       importExportModalRackId: null,
       deviceRegistrationModalOpen: false,
-  modelRegistrationModalOpen: false,
-  isSyncingPorts: false,
-  setIsSyncingPorts: (val) => set({ isSyncingPorts: val }),
-  deviceDeleteConfirm: null,
+      modelRegistrationModalOpen: false,
+      isSyncingPorts: false,
+      setIsSyncingPorts: (val) => set({ isSyncingPorts: val }),
+      deviceDeleteConfirm: null,
       setDeviceDeleteConfirm: (confirm) => set({ deviceDeleteConfirm: confirm }),
       highlightedDeviceId: null,
       blinkTimeoutId: null,
@@ -666,7 +666,7 @@ export const useStore = create<AppState>()(
         const isSyncing = get().isSyncingPorts;
         const impDirty = get()._importDirty;
         if (isSyncing) return false;
-        
+
         const {
           racks,
           importedModels,
@@ -725,12 +725,12 @@ export const useStore = create<AppState>()(
         // 1. Check for node hierarchy/name changes or new nodes
         const baseNodesMap = new Map(baseNodes.map(n => [n.nodeId, n]));
         const currentNodesMap = new Map(nodes.map(n => [n.nodeId, n]));
-        
+
         nodes.forEach(n => {
           const base = baseNodesMap.get(n.nodeId);
           if (!base || JSON.stringify(n) !== JSON.stringify(base)) {
             dirtyIds.add(n.nodeId); // Mark the node itself as dirty
-            
+
             // If it's a new node or moved node, mark the affected parents as dirty
             if (!base) {
               if (n.parentId) dirtyIds.add(n.parentId);
@@ -879,7 +879,7 @@ export const useStore = create<AppState>()(
         try {
           const snapshot = structuredClone({ racks, importedModels, nodes: currentNodes, registeredDevices: get().registeredDevices, nodeEnvironments: get().nodeEnvironments, layouts: updatedLayouts });
           console.log("saveChanges snapshot created:", snapshot);
-          
+
           set({
             layouts: updatedLayouts,
             baselineRacks: snapshot.racks,
@@ -1194,13 +1194,13 @@ export const useStore = create<AppState>()(
               }
 
               if (matchedVariant || dev.modelName === oldModel.modelName) {
-                const newVariant = updatedModel.variants?.find(v => v.variantId === matchedVariant?.variantId) 
-                                || updatedModel.variants?.find(v => v.variantName === matchedVariant?.variantName)
-                                || updatedModel.variants?.[0];
-                
-                const newDevModelName = newVariant 
-                   ? (newVariant.variantName === "기본타입" ? updatedModel.modelName : `${updatedModel.modelName} ${newVariant.variantName}`)
-                   : updatedModel.modelName;
+                const newVariant = updatedModel.variants?.find(v => v.variantId === matchedVariant?.variantId)
+                  || updatedModel.variants?.find(v => v.variantName === matchedVariant?.variantName)
+                  || updatedModel.variants?.[0];
+
+                const newDevModelName = newVariant
+                  ? (newVariant.variantName === "기본타입" ? updatedModel.modelName : `${updatedModel.modelName} ${newVariant.variantName}`)
+                  : updatedModel.modelName;
 
                 return {
                   ...dev,
@@ -1229,12 +1229,12 @@ export const useStore = create<AppState>()(
                 if (matchedVariant || dev.modelName === oldModel.modelName) {
                   changed = true;
                   const newVariant = updatedModel.variants?.find(v => v.variantId === matchedVariant?.variantId)
-                                  || updatedModel.variants?.find(v => v.variantName === matchedVariant?.variantName)
-                                  || updatedModel.variants?.[0];
-                  const newDevModelName = newVariant 
+                    || updatedModel.variants?.find(v => v.variantName === matchedVariant?.variantName)
+                    || updatedModel.variants?.[0];
+                  const newDevModelName = newVariant
                     ? (newVariant.variantName === "기본타입" ? updatedModel.modelName : `${updatedModel.modelName} ${newVariant.variantName}`)
                     : updatedModel.modelName;
-                    
+
                   return {
                     ...dev,
                     modelName: newDevModelName,
@@ -1261,12 +1261,12 @@ export const useStore = create<AppState>()(
           }
 
           // 2. Baseline 상태 동기화 (Edit Mode의 Unsaved 상태를 트리거하지 않도록)
-          const baselineRegisteredDevices = state.baselineRegisteredDevices 
-            ? applyToDevices(state.baselineRegisteredDevices) 
+          const baselineRegisteredDevices = state.baselineRegisteredDevices
+            ? applyToDevices(state.baselineRegisteredDevices)
             : state.baselineRegisteredDevices;
-            
-          const baselineRacks = state.baselineRacks 
-            ? applyToRacks(state.baselineRacks) 
+
+          const baselineRacks = state.baselineRacks
+            ? applyToRacks(state.baselineRacks)
             : state.baselineRacks;
 
           const baselineLayouts = state.baselineLayouts ? { ...state.baselineLayouts } : state.baselineLayouts;
@@ -1282,10 +1282,10 @@ export const useStore = create<AppState>()(
           }
 
           saveCustomModelsToProject(customModels);
-          return { 
-            customModels, 
-            registeredDevices, 
-            racks, 
+          return {
+            customModels,
+            registeredDevices,
+            racks,
             layouts,
             baselineRegisteredDevices,
             baselineRacks,
@@ -1988,10 +1988,10 @@ export const useStore = create<AppState>()(
         if (enabled) {
           // Entering Edit Mode: Snapshot current state as baseline
           // Phase 3-A: 단일 structuredClone으로 통합
-          const editSnap = structuredClone({ 
-            racks, 
-            importedModels, 
-            nodes: get().nodes, 
+          const editSnap = structuredClone({
+            racks,
+            importedModels,
+            nodes: get().nodes,
             nodeEnvironments: get().nodeEnvironments,
             layouts: get().layouts,
             registeredDevices: get().registeredDevices
@@ -2730,7 +2730,7 @@ export const useStore = create<AppState>()(
       // Imported Model Actions
       addImportedModel: (modelData) => {
         const { _cameraRef, isEditMode, pushUndoState, activeNodeId, nodes } = get();
-        
+
         const activeNode = nodes.find(n => n.nodeId === activeNodeId);
         if (!activeNodeId || activeNode?.type !== "room") {
           get().showToast("전산실을 선택하거나 생성해주세요.", "error");
@@ -3043,8 +3043,8 @@ export const useStore = create<AppState>()(
         // Fix race condition where IndexedDB loads after ThemeContext and overwrites the theme.
         // We force the theme settings to match whatever currentState.csIsLightMode holds, 
         // while allowing other persisted size configurations to be restored.
-        const themeConfig = currentState.csIsLightMode 
-          ? LIGHT_THEME_CYBER_SPACE_CONFIG 
+        const themeConfig = currentState.csIsLightMode
+          ? LIGHT_THEME_CYBER_SPACE_CONFIG
           : DEFAULT_CYBER_SPACE_CONFIG;
 
         const sizeConfig = {

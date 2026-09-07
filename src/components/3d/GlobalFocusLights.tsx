@@ -9,6 +9,7 @@ export const GlobalFocusLights = () => {
   const selectedRackId = useStore((s) => s.selectedRackId);
   const racks = useStore((s) => s.racks);
   const isEditMode = useStore((s) => s.isEditMode);
+  const cyberSpaceEnabled = useStore((s) => s.cyberSpaceEnabled);
 
   // Focus takes precedence over selection for lighting effects
   const activeRackId = focusedRackId || selectedRackId;
