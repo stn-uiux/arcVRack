@@ -38,7 +38,7 @@ const ShadowOptimizer = () => {
     s.racks.map(r => `${r.rackId}-${r.position.join()}-${r.orientation}-${r.rackSize}`).join()
   );
   const modelsHash = useStore((s) =>
-    s.importedModels.map(m => `${m.itemId}-${m.position.join()}-${m.rotation?.join()}-${m.lightParams?.intensity}-${m.lightParams?.color}-${m.lightParams?.castShadow}`).join()
+    s.importedModels.map(m => `${m.id}-${m.position.join()}-${m.rotation?.join()}-${m.lightParams?.intensity}-${m.lightParams?.color}-${m.lightParams?.castShadow}`).join()
   );
 
   useEffect(() => {

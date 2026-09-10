@@ -239,6 +239,7 @@ export type BuiltinModelType =
   | "ChairOffice"
   | "PartitionModel"
   | "TableLarge"
+  | "TableSmall"
   | "DoorAuto";
 
 // 가시성 모드 (투명 유리 vs 불투명)
