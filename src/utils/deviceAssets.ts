@@ -154,8 +154,21 @@ export const resolveDeviceImage = (
   const custom = findCustomModelByName(modelName);
   const isChassis = isChassisModel(modelName);
   
-  if (custom && custom.modelPngRaw) {
-    return custom.modelPngRaw;
+  if (custom) {
+    // Check if it's a variant match and has variantPngRaw
+    if (custom.variants && custom.variants.length > 0) {
+      const variant = custom.variants.find((v) => {
+        const appendedName = v.variantName === "기본타입" ? custom.modelName : `${custom.modelName} ${v.variantName}`;
+        return appendedName.toLowerCase() === modelName.toLowerCase();
+      });
+      if (variant && variant.variantPngRaw) {
+        return variant.variantPngRaw;
+      }
+    }
+    
+    if (custom.modelPngRaw) {
+      return custom.modelPngRaw;
+    }
   }
   
   // chassis 템플릿의 경우 정적 PNG가 없으면 빈 섀시 SVG를 Data URL로 변환하여 즉시 반환
