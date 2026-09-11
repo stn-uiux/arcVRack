@@ -588,6 +588,8 @@ Return the data in this JSON format:
       data-port-type="${port.portName || "port"}"
       data-local-port="${port.portNumber}"
       d="${pathData}" 
+      fill="none"
+      stroke="none"
     />`;
       })
       .join("\n");
